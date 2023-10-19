@@ -1,12 +1,21 @@
 import { useState } from 'react';
 
 export default function Board() {
+  const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
 
   function handleClick(index) {
+    if (squares[index]) {
+      return;
+    }
     const nextSquares = squares.slice();
-    nextSquares[index] = "X";
+    if(xIsNext){
+      nextSquares[index] = "X";
+    }else{
+      nextSquares[index] = "O";
+    }
     setSquares(nextSquares);
+    setXIsNext(!xIsNext);
   }
   return (
     <>
@@ -27,7 +36,7 @@ export default function Board() {
       </div>
     </>
   );
-}
+} 
 
 function Square({value, onSquareClick}) {
   return <button className="square" 
