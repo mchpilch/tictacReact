@@ -28,7 +28,7 @@ export default function Game() {
     return (
       <>
         <li key={move}>
-          {move != currentMove ? <button onClick={() => jumpTo(move)}> {desc} </button> : <p>You are at the move #{ move } </p>}
+          {move != currentMove ? <button onClick={() => jumpTo(move)}> {desc} </button> : <p>You are at the move #{move} </p>}
         </li>
       </>
     );
@@ -68,11 +68,25 @@ function Board({ xIsNext, squares, onPlay }) {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
 
-  function renderRow(i){ //i nr rzędu
+  function renderBoard() {
+    const board = [];
+    for (let i = 0; i < 3; i++) {
+      board.push(
+        <div className="board-row">
+          {renderRow(i)}
+        </div>
+      );
+    }
+    return (
+      board
+    );
+  }
+
+  function renderRow(i) { //i nr rzędu
     const row = [];
-    for(let j = 0; j < 3; j++){
+    for (let j = 0; j < 3; j++) {
       row.push(
-        <Square className="sqr" value={squares[j+3*i]} onSquareClick={() => handleClick(j+3*i)} />
+        <Square className="sqr" key={j + 3 * i} value={squares[j + 3 * i]} onSquareClick={() => handleClick(j + 3 * i)} /> //waring gone thx to key
       );
     }
     return (
@@ -83,15 +97,7 @@ function Board({ xIsNext, squares, onPlay }) {
   return (
     <>
       <div className="status">{status}</div>
-      <div className="board-row">
-          {renderRow(0)}
-      </div>
-      <div className="board-row">
-        {renderRow(1)}
-      </div>
-      <div className="board-row">
-        {renderRow(2)}
-      </div>
+       {renderBoard()}
     </>
   );
 }
