@@ -13,7 +13,7 @@ code {
     monospace;
 }
 
-/* styles.css */
+
 .square {
   width: 100px; 
   height: 100px;
@@ -25,54 +25,35 @@ code {
   justify-content: center;
 }
 
+.square.row-0.col-0 {
+  background-color: red;
+  color: white;
+}
+
+.square.row-0.col-0, 
+.square.row-0.col-1, 
+.square.row-0.col-2, 
+.square.row-1.col-0, 
+.square.row-1.col-1, 
+.square.row-1.col-2, 
+.square.row-2.col-0, 
+.square.row-2.col-1, 
+.square.row-2.col-2 {
+  background-color: red;
+  color: white;
+}
+
+
+
+
 .board{
   margin: 400px;
 }
 
 .square:hover {
-  background-color: #2980b9; /* Change the background color on hover */
+  background-color: #2980b9;
 }
 
 .game-info{
-
   background-color: aqua;
 }
-
-/* .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 3s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */

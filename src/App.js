@@ -18,7 +18,7 @@ export default function Game() {
     slicedHistory.push(nextSquares);
     let slicedHistoryRev = [];
     for (let i = 0; i < slicedHistory.length; i++) {
-      slicedHistoryRev.push([slicedHistory[slicedHistory.length-1-i]]);
+      slicedHistoryRev.push([slicedHistory[slicedHistory.length - 1 - i]]);
     }
     const nextHistoryRev = slicedHistoryRev;
     setHistoryRev(nextHistoryRev);
@@ -51,7 +51,7 @@ export default function Game() {
 
   });
 
-  const movesRev = historyRev.map((squares, index) => { 
+  const movesRev = historyRev.map((squares, index) => {
     index = historyRev.length - index - 1;
     let description;
     if (index > 0) {
@@ -104,20 +104,25 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
   const winner = calculateWinner(squares);
   let status;
   if (winner) {
-    status = 'Winner: ' + winner;
+    status = 'Winner: ' + winner.sign;
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
-    if(currentMove == 9){
+    if (currentMove == 9) {
       status = 'DRAW';
     }
   }
 
   function renderBoard() {
+    let patternIndex = calculateWinner(squares)?.index; //? solves error but still undefined in console.log so take a look at that
+    console.log('patternIndex ', patternIndex);
+    let squaresToHighlight = calculateRowAndColumn(patternIndex);
+    console.log('squaresToHighlight ', squaresToHighlight);
+
     const board = [];
     for (let i = 0; i < 3; i++) {
       board.push(
         <div className="board-row">
-          {renderRow(i)}
+          {renderRow(i, squaresToHighlight)}
         </div>
       );
     }
@@ -126,11 +131,22 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
     );
   }
 
-  function renderRow(i) { //i == row nr
+  function renderRow(i, squaresToHighlight) { //i == row nr, j = column nr (form 0 to 2)
     const row = [];
     for (let j = 0; j < 3; j++) {
+      let positionHighlight = [null,null];
+      squaresToHighlight.forEach(element => {
+        if(element[0] == i && element[1] == j){
+          positionHighlight = [i,j];
+        }
+      });
       row.push(
-        <Square className="sqr" key={j + 3 * i} value={squares[j + 3 * i]} onSquareClick={() => handleClick(j + 3 * i)} /> //waring gone thx to key
+        <Square
+          positionHighlight={positionHighlight}
+          key={j + 3 * i} //waring gone thx to key
+          value={squares[j + 3 * i]}
+          onSquareClick={() => handleClick(j + 3 * i)}
+        /> 
       );
     }
     return (
@@ -146,28 +162,72 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
   );
 }
 
-function Square({ value, onSquareClick }) {
-  return <button className="square"
-    onClick={onSquareClick}> {value}
-  </button>
+function Square({ value, onSquareClick, positionHighlight }) { // TODO!!! jakiś bug jest bo dla X gra a dla O nie xD issue when cross
+  let dynamicClassName = 'square';
+
+  if (positionHighlight !== null) {
+    const [row, col] = positionHighlight;
+     dynamicClassName = `square row-${positionHighlight[0]} col-${positionHighlight[1]}`;
+  }
+
+  return (
+    <button className={dynamicClassName} onClick={onSquareClick}>
+      {value}
+    </button>
+  );
 }
 
 function calculateWinner(squares) {
   const lines = [
-    [0, 1, 2],  //horizontal
-    [3, 4, 5],  //horizontal
-    [6, 7, 8],  //horizontal
-    [0, 3, 6],  //vertical
-    [1, 4, 7],  //vertical
-    [2, 5, 8],  //vertical
-    [0, 4, 8],  //cross
-    [2, 4, 6]   //cross
+    [0, 1, 2],  //horizontal  top        //0 - index
+    [3, 4, 5],  //horizontal  mid        //1
+    [6, 7, 8],  //horizontal  bottom     //2
+    [0, 3, 6],  //vertical    left       //3
+    [1, 4, 7],  //vertical    mid        //4
+    [2, 5, 8],  //vertical    right      //5
+    [0, 4, 8],  //cross       down       //6
+    [2, 4, 6]   //cross       up         //7
   ];
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { sign: squares[a], index: i };
     }
   }
   return null;
+}
+
+function calculateRowAndColumn(index) {
+  let threeSquaresToColor = [[null, null], [null, null], [null, null]];
+  switch (index) {
+    case 0:   //horizontal  top 
+      threeSquaresToColor = [[0, 0], [0, 1], [0, 2]];
+      break;
+    case 1: //horizontal  mid 
+      threeSquaresToColor = [[1, 0], [1, 1], [1, 2]];
+      break;
+    case 2: //horizontal  bottom 
+      threeSquaresToColor = [[2, 0], [2, 1], [2, 2]];
+      break;
+    case 3: //vertical    left   
+      threeSquaresToColor = [[0, 0], [1, 0], [2, 0]];
+      break;
+    case 4: //vertical    mid   
+      threeSquaresToColor = [[0, 1], [1, 1], [2, 1]];
+      break;
+    case 5: //vertical    right 
+      threeSquaresToColor = [[0, 2], [1, 2], [2, 2]];
+      break;
+    case 6: //cross up
+      threeSquaresToColor = [[2, 0], [1, 1], [0, 2]];
+      break;
+    case 7: //cross down
+      threeSquaresToColor = [[0, 0], [1, 1], [2, 2]];
+      break;
+    default:
+      console.log(`error no index ${index}.`);
+  }
+
+  return threeSquaresToColor;
 }
