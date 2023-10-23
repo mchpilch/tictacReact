@@ -219,11 +219,11 @@ function calculateRowAndColumn(index) {
     case 5: //vertical    right 
       threeSquaresToColor = [[0, 2], [1, 2], [2, 2]];
       break;
-    case 6: //cross up
-      threeSquaresToColor = [[2, 0], [1, 1], [0, 2]];
-      break;
-    case 7: //cross down
+    case 6: //cross down
       threeSquaresToColor = [[0, 0], [1, 1], [2, 2]];
+      break;
+    case 7: //cross up
+      threeSquaresToColor = [[2, 0], [1, 1], [0, 2]];
       break;
     default:
       console.log(`error no index ${index}.`);
