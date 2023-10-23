@@ -73,7 +73,7 @@ export default function Game() {
   return (
     <div className='game'>
       <div className='game-board'>
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} currentMove={currentMove} />
       </div>
       <div className="game-info">
         <button onClick={() => reverse()}> Reverse list </button>
@@ -87,7 +87,7 @@ export default function Game() {
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({ xIsNext, squares, onPlay, currentMove }) {
   function handleClick(index) {
     if (squares[index] || calculateWinner(squares)) {
       return;
@@ -107,6 +107,9 @@ function Board({ xIsNext, squares, onPlay }) {
     status = 'Winner: ' + winner;
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    if(currentMove == 9){
+      status = 'DRAW';
+    }
   }
 
   function renderBoard() {
