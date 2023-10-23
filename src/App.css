@@ -33,6 +33,11 @@ code {
   background-color: #2980b9; /* Change the background color on hover */
 }
 
+.game-info{
+  float: left;
+  background-color: aqua;
+}
+
 /* .App {
   text-align: center;
 }

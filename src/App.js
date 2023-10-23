@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './App.css'; // Import your CSS file
+import './App.css';
 
 export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -7,14 +7,30 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
+  const [isReverse, setIsReversed] = useState(false);
+  const [historyRev, setHistoryRev] = useState([Array(9).fill(null)]);
+
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
+
+    const slicedHistory = history.slice(0, currentMove + 1);
+    slicedHistory.push(nextSquares);
+    let slicedHistoryRev = [];
+    for (let i = 0; i < slicedHistory.length; i++) {
+      slicedHistoryRev.push([slicedHistory[slicedHistory.length-1-i]]);
+    }
+    const nextHistoryRev = slicedHistoryRev;
+    setHistoryRev(nextHistoryRev);
     setCurrentMove(nextHistory.length - 1);
   }
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
+  }
+
+  function reverse() {
+    setIsReversed(!isReverse);
   }
 
   const moves = history.map((squares, move) => {
@@ -28,19 +44,44 @@ export default function Game() {
     return (
       <>
         <li key={move}>
-          {move != currentMove ? <button onClick={() => jumpTo(move)}> {desc} </button> : <p>You are at the move #{move} </p>}
+          {move !== currentMove ? <button onClick={() => jumpTo(move)}> {desc} </button> : <p > You are at the move #{move} </p>}
         </li>
       </>
     );
 
   });
+
+  const movesRev = historyRev.map((squares, index) => { 
+    index = historyRev.length - index - 1;
+    let description;
+    if (index > 0) {
+      description = 'Rev Go to move #' + index;
+    } else {
+      description = 'Rev Go to game start';
+    }
+
+    return (
+      <>
+        <li key={index}>
+          {index !== currentMove ? <button onClick={() => jumpTo(index)}> {description} </button> : <p > You are at the move #{index} </p>}
+        </li>
+      </>
+    );
+
+  });
+
   return (
     <div className='game'>
       <div className='game-board'>
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <button onClick={() => reverse()}> Reverse list </button>
+        {
+          isReverse ?
+            (<ol>{moves}</ol>) :
+            (<ol reversed>{movesRev}</ol>)
+        }
       </div>
     </div>
   );
@@ -82,7 +123,7 @@ function Board({ xIsNext, squares, onPlay }) {
     );
   }
 
-  function renderRow(i) { //i nr rzędu
+  function renderRow(i) { //i == row nr
     const row = [];
     for (let j = 0; j < 3; j++) {
       row.push(
@@ -97,7 +138,7 @@ function Board({ xIsNext, squares, onPlay }) {
   return (
     <>
       <div className="status">{status}</div>
-       {renderBoard()}
+      {renderBoard()}
     </>
   );
 }
