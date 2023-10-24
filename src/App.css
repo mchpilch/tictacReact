@@ -13,10 +13,10 @@ code {
     monospace;
 }
 
-
 .square {
   width: 100px; 
   height: 100px;
+  float: left;
   background-color: #3498db;
   color: white; 
   font-size: 24px; 
@@ -25,9 +25,19 @@ code {
   justify-content: center;
 }
 
-.square.row-0.col-0 {
-  background-color: red;
-  color: white;
+.status {
+  margin-bottom: 10px;
+  background-color: azure;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
+  background-color: bisque;
 }
 
 .square.row-0.col-0, 
@@ -43,9 +53,6 @@ code {
   color: white;
 }
 
-
-
-
 .board{
   margin: 400px;
 }
@@ -54,6 +61,4 @@ code {
   background-color: #2980b9;
 }
 
-.game-info{
-  background-color: aqua;
-}
+

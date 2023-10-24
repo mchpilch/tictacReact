@@ -9,6 +9,7 @@ export default function Game() {
 
   const [isReverse, setIsReversed] = useState(false);
   const [historyRev, setHistoryRev] = useState([Array(9).fill(null)]);
+   const [locationHistory, setLocationHistroy] = useState([Array(10).fill(null)]);
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -33,6 +34,8 @@ export default function Game() {
     setIsReversed(!isReverse);
   }
 
+  locationHistory[currentMove] = findChangeInHistory(currentMove, history);
+
   const moves = history.map((squares, move) => {
     let desc;
     if (move > 0) {
@@ -44,7 +47,26 @@ export default function Game() {
     return (
       <>
         <li key={move}>
-          {move !== currentMove ? <button onClick={() => jumpTo(move)}> {desc} </button> : <p > You are at the move #{move} </p>}
+          {move !== currentMove
+            ?
+            <>
+              <button onClick={() => jumpTo(move)}> {desc}  </button>
+              {locationHistory[move] && move > 0 && (
+                <p>
+                  {'[' + locationHistory[move][0] + ',' + locationHistory[move][1] + ']'}
+                </p>
+              )}
+            </>
+            :
+            <>
+              <p> You are at the move #{move} </p>
+              {locationHistory[move] && move > 0 && (
+                <p>
+                  {'[' + locationHistory[move][0] + ',' + locationHistory[move][1] + ']'}
+                </p>
+              )}
+            </>
+          }
         </li>
       </>
     );
@@ -78,13 +100,33 @@ export default function Game() {
       <div className="game-info">
         <button onClick={() => reverse()}> Reverse list </button>
         {
-          isReverse ?
-            (<ol>{moves}</ol>) :
+          isReverse
+            ?
             (<ol reversed>{movesRev}</ol>)
+            :
+            (<ol>{moves}</ol>)
         }
       </div>
     </div>
   );
+}
+
+function findChangeInHistory(currentMove, history) {
+  let location = [null, null];
+  if (currentMove === 0) {
+    return location;
+  }
+
+  for (var i = 0; i < 9; i++) { // lece po historii
+    if (history[currentMove][i] !== history[currentMove - 1][i]) { //porownuje boardy w historii
+      let index = i;                                    //(0, 1, 2, 3, 4, 5, 6, 7, 8)
+      const row = Math.floor(index / 3);  //(0, 0, 0, 1, 1, 1, 2, 2, 2)
+      const col = index % 3;              //(0, 1, 2, 0, 1, 2, 0, 1, 2)
+      let result = [row, col];
+      return result;
+    }
+  }
+  return location;
 }
 
 function Board({ xIsNext, squares, onPlay, currentMove }) {
@@ -107,21 +149,20 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
     status = 'Winner: ' + winner.sign;
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
-    if (currentMove == 9) {
+    if (currentMove === 9) {
       status = 'DRAW';
     }
   }
 
   function renderBoard() {
-    let patternIndex = calculateWinner(squares)?.index; //? solves error but still undefined in console.log so take a look at that
-    console.log('patternIndex ', patternIndex);
+    let patternIndex = calculateWinner(squares)?.index;
     let squaresToHighlight = calculateRowAndColumn(patternIndex);
-    console.log('squaresToHighlight ', squaresToHighlight);
 
     const board = [];
     for (let i = 0; i < 3; i++) {
       board.push(
-        <div className="board-row">
+        //Warning: Each child in a list should have a unique "key" prop. FIXED by adding key here
+        <div className="board-row" key={i}>
           {renderRow(i, squaresToHighlight)}
         </div>
       );
@@ -134,10 +175,10 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
   function renderRow(i, squaresToHighlight) { //i == row nr, j = column nr (form 0 to 2)
     const row = [];
     for (let j = 0; j < 3; j++) {
-      let positionHighlight = [null,null];
+      let positionHighlight = [null, null];
       squaresToHighlight.forEach(element => {
-        if(element[0] == i && element[1] == j){
-          positionHighlight = [i,j];
+        if (element[0] === i && element[1] === j) {
+          positionHighlight = [i, j];
         }
       });
       row.push(
@@ -146,7 +187,7 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
           key={j + 3 * i} //waring gone thx to key
           value={squares[j + 3 * i]}
           onSquareClick={() => handleClick(j + 3 * i)}
-        /> 
+        />
       );
     }
     return (
@@ -162,12 +203,12 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
   );
 }
 
-function Square({ value, onSquareClick, positionHighlight }) { // TODO!!! jakiś bug jest bo dla X gra a dla O nie xD issue when cross
+function Square({ value, onSquareClick, positionHighlight }) {
   let dynamicClassName = 'square';
 
   if (positionHighlight !== null) {
     const [row, col] = positionHighlight;
-     dynamicClassName = `square row-${positionHighlight[0]} col-${positionHighlight[1]}`;
+    dynamicClassName = `square row-${row} col-${col}`;
   }
 
   return (
@@ -226,7 +267,7 @@ function calculateRowAndColumn(index) {
       threeSquaresToColor = [[2, 0], [1, 1], [0, 2]];
       break;
     default:
-      console.log(`error no index ${index}.`);
+      break;
   }
 
   return threeSquaresToColor;
