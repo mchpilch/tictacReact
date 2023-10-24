@@ -37,6 +37,7 @@ code {
 
 .game-info {
   margin-left: 20px;
+  padding: 10px;
   background-color: bisque;
 }
 
@@ -61,4 +62,23 @@ code {
   background-color: #2980b9;
 }
 
+.btn {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 12px;
+  margin: 2px 1px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.btn {
+  background-color:  #d9e4ed;
+  color: black; 
+  border: 2px solid #008CBA;
+}
 
+.btn:hover {
+  background-color: #008CBA;
+  color: white;
+}

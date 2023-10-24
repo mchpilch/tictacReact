@@ -9,7 +9,7 @@ export default function Game() {
 
   const [isReverse, setIsReversed] = useState(false);
   const [historyRev, setHistoryRev] = useState([Array(9).fill(null)]);
-   const [locationHistory, setLocationHistroy] = useState([Array(10).fill(null)]);
+  const [locationHistory, setLocationHistroy] = useState([Array(10).fill(null)]);
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -37,11 +37,11 @@ export default function Game() {
   locationHistory[currentMove] = findChangeInHistory(currentMove, history);
 
   const moves = history.map((squares, move) => {
-    let desc;
+    let description;
     if (move > 0) {
-      desc = 'Go to move #' + move;
+      description = 'Go to move #' + move;
     } else {
-      desc = 'Go to game start';
+      description = 'Go to game start';
     }
 
     return (
@@ -50,19 +50,19 @@ export default function Game() {
           {move !== currentMove
             ?
             <>
-              <button onClick={() => jumpTo(move)}> {desc}  </button>
+              <button className="btn" onClick={() => jumpTo(move)}> {description}  </button>
               {locationHistory[move] && move > 0 && (
                 <p>
-                  {'[' + locationHistory[move][0] + ',' + locationHistory[move][1] + ']'}
+                  {'Move at location: [' + locationHistory[move][0] + ',' + locationHistory[move][1] + ']'}
                 </p>
               )}
             </>
             :
             <>
-              <p> You are at the move #{move} </p>
+              <b> You are at the move #{move} </b>
               {locationHistory[move] && move > 0 && (
                 <p>
-                  {'[' + locationHistory[move][0] + ',' + locationHistory[move][1] + ']'}
+                  {'Move at location: [' + locationHistory[move][0] + ',' + locationHistory[move][1] + ']'}
                 </p>
               )}
             </>
@@ -83,11 +83,28 @@ export default function Game() {
     }
 
     return (
-      <>
-        <li key={index}>
-          {index !== currentMove ? <button onClick={() => jumpTo(index)}> {description} </button> : <p > You are at the move #{index} </p>}
-        </li>
-      </>
+      <li key={index}>
+        {index !== currentMove
+          ?
+          <>
+            <button className="btn" onClick={() => jumpTo(index)}> {description}  </button>
+            {locationHistory[index] && index > 0 && (
+              <p>
+                {'Move at location: [' + locationHistory[index][0] + ',' + locationHistory[index][1] + ']'}
+              </p>
+            )}
+          </>
+          :
+          <>
+            <b> You are at the move #{index} </b>
+            {locationHistory[index] && index > 0 && (
+              <p>
+                {'Move at location: [' + locationHistory[index][0] + ',' + locationHistory[index][1] + ']'}
+              </p>
+            )}
+          </>
+        }
+      </li>
     );
 
   });
@@ -98,7 +115,7 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} currentMove={currentMove} />
       </div>
       <div className="game-info">
-        <button onClick={() => reverse()}> Reverse list </button>
+        <button className="btn" onClick={() => reverse()}> Reverse list </button>
         {
           isReverse
             ?
@@ -197,7 +214,7 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
 
   return (
     <>
-      <div className="status">{status}</div>
+      <div className="status"><b>{status}</b></div>
       {renderBoard()}
     </>
   );
